@@ -1,0 +1,4 @@
+fov_radius: 8
+map_width: 80
+map_height: 45
+treasure_room_chance: 0.05
