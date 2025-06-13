@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+      - name: Lint
+        run: |
+          poetry run ruff .
+          poetry run mypy roguelike
+      - name: Test
+        run: |
+          poetry run pytest -q
+      - name: Build
+        run: |
+          poetry run pyinstaller --onefile -n roguelike -m roguelike.main
